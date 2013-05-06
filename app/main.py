@@ -124,11 +124,10 @@ class SploitApp(App):
 		path = './'
 		path += time.strftime("%B-%_e-%_I-%M-")
 		path += '.png'
-		droid.cameraCapturePicture(path, True)
+		android.cameraCapturePicture(path, True)
 
 	def build(self):
 		acc = Accordion()
-		self.droid = android.Android()
 		
 		##This is where we setup the two pages
 		page1 = AccordionItem(title='Bruteforce')
@@ -155,8 +154,8 @@ class SploitApp(App):
 
 		##Page 3 -- ADB test
 		three = FloatLayout()
-		adbtestbut = Button(text=str('Test ADB'), size_hint=(0.3, 0.3), pos_hint={'x':0.35, 'y':0.4})
-		camtestbut = Button(text=str('Test ADB'), size_hint=(0.3, 0.3), pos_hint={'x':0.35, 'y':0.4})
+		adbtestbut = Button(text=str('Test ADB'), size_hint=(0.3, 0.3), pos_hint={'x':0.1, 'y':0.4})
+		camtestbut = Button(text=str('Test Cam'), size_hint=(0.3, 0.3), pos_hint={'x':0.6, 'y':0.4})
 		three.add_widget(adbtestbut)
 		three.add_widget(camtestbut)
 		page3.add_widget(three)
