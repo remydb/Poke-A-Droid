@@ -15,7 +15,96 @@ from kivy.uix.image import Image
 from kivy.uix.widget import Widget
 #from kivy.uix.camera import Camera
 from kivy.core.camera import Camera as CoreCamera
+from kivy.core.image import Image as CoreImage
 #from kivy.uix.anchorlayout import AnchorLayout
+from kivy.properties import NumericProperty, ListProperty, BooleanProperty
+
+class Camera(Image):
+	'''Camera class. See module documentation for more information.
+	'''
+
+	play = BooleanProperty(True)
+	'''Boolean indicate if the camera is playing.
+	You can start/stop the camera by setting this property::
+
+		# start the camera playing at creation (default)
+		cam = Camera(play=True)
+
+		# create the camera, and start later
+		cam = Camera(play=False)
+		# and later
+		cam.play = True
+
+	:data:`play` is a :class:`~kivy.properties.BooleanProperty`, default to
+	True.
+	'''
+
+	index = NumericProperty(-1)
+	'''Index of the used camera, starting from 0.
+
+	:data:`index` is a :class:`~kivy.properties.NumericProperty`, default to -1
+	to allow auto selection.
+	'''
+
+	resolution = ListProperty([-1, -1])
+	'''Preferred resolution to use when invoking the camera. If you are using
+	[-1, -1], the resolution will be the default one::
+
+		# create a camera object with the best image available
+		cam = Camera()
+
+		# create a camera object with an image of 320x240 if possible
+		cam = Camera(resolution=(320, 240))
+
+	.. warning::
+
+		Depending on the implementation, the camera may not respect this
+		property.
+
+	:data:`resolution` is a :class:`~kivy.properties.ListProperty`, default to
+	[-1, -1]
+	'''
+
+	def __init__(self, **kwargs):
+		self._camera = None
+		super(Camera, self).__init__(**kwargs)
+		if self.index == -1:
+			self.index = 0
+		self.bind(index=self._on_index,
+				resolution=self._on_index)
+		self._on_index()
+
+	def on_tex(self, *l):
+		self.canvas.ask_update()
+
+	def _on_index(self, *largs):
+		self._camera = None
+		if self.index < 0:
+			return
+		if self.resolution[0] < 0 or self.resolution[1] < 0:
+			return
+		self._camera = CoreCamera(index=self.index,
+			resolution=self.resolution, stopped=True)
+		self._camera.bind(on_load=self._camera_loaded)
+		if self.play:
+			self._camera.start()
+			self._camera.bind(on_texture=self.on_tex)
+
+	def _camera_loaded(self, *largs):
+		self.texture = self._camera.texture
+		self.texture_size = list(self.texture.size)
+		img = CoreImage(self.texture)
+		img.save('pic.png')
+
+	def on_play(self, instance, value):
+		if not self._camera:
+			return
+		if value:
+			self._camera.start()
+		else:
+			self._camera.stop()
+
+
 
 class SploitApp(App):
 
@@ -134,16 +223,13 @@ class SploitApp(App):
 
 	def testcam(self,*largs):
 		#camwidget = Widget()  #Create a camera Widget
-		#cam = Camera()        #Get the camera
-		#cam=Camera(resolution=(640,480))
-		#cam.play=True         #Start the camera
+		cam = Camera()        #Get the camera
+		cam=Camera(resolution=(640,480))
+		cam.play=True         #Start the camera
 		#camwidget.add_widget(cam)
 		#################################
 		# I HAVE NO IDEA WHAT I'M DOING #
 		#################################
-		self._camera = CoreCamera(index=0,
-						resolution=(640,480), stopped=False)
-		self._camera.bind(on_load=self._camera_loaded)
 		#img = Image(self.texture)
 		#img.save('pic.png')
 		#button=Button(text='screenshot',size_hint=(0.12,0.12))
@@ -151,12 +237,6 @@ class SploitApp(App):
 		#camwidget.add_widget(button)    #Add button to Camera Widget
 		#self.root.add_widget(camwidget)
 		return
-
-	def _camera_loaded(self, *largs):
-		self.texture = self._camera.texture
-		self.texture_size = list(self.texture.size)
-		img = Image(self.texture)
-		img.save('what.png')
 
 	def build(self):
 		acc = Accordion()
