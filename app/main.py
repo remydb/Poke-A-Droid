@@ -222,20 +222,20 @@ class SploitApp(App):
 		Window.screenshot(name='screenshot%(counter)04d.jpg')
 
 	def testcam(self,*largs):
-		#camwidget = Widget()  #Create a camera Widget
+		camwidget = Widget()  #Create a camera Widget
 		cam = Camera()        #Get the camera
-		cam=Camera(resolution=(640,480))
+		cam=Camera(resolution=(640,480), size=(500,500))
 		cam.play=True         #Start the camera
-		#camwidget.add_widget(cam)
+		camwidget.add_widget(cam)
 		#################################
 		# I HAVE NO IDEA WHAT I'M DOING #
 		#################################
 		#img = Image(self.texture)
 		#img.save('pic.png')
-		#button=Button(text='screenshot',size_hint=(0.12,0.12))
-		#button.bind(on_press=self.doscreenshot)
-		#camwidget.add_widget(button)    #Add button to Camera Widget
-		#self.root.add_widget(camwidget)
+		button=Button(text='screenshot',size_hint=(0.12,0.12))
+		button.bind(on_press=self.doscreenshot)
+		camwidget.add_widget(button)    #Add button to Camera Widget
+		self.root.add_widget(camwidget)
 		return
 
 	def build(self):
