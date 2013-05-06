@@ -1,5 +1,6 @@
 import kivy
 import subprocess
+import android
 kivy.require('1.0.7')
 
 from kivy.app import App
@@ -119,13 +120,20 @@ class SploitApp(App):
 		popup.open()
 		return
 
+	def testcam(self, value):
+		path = './'
+		path += time.strftime("%B-%_e-%_I-%M-")
+		path += '.png'
+		droid.cameraCapturePicture(path, True)
+
 	def build(self):
 		acc = Accordion()
+		self.droid = android.Android()
 		
 		##This is where we setup the two pages
 		page1 = AccordionItem(title='Bruteforce')
 		page2 = AccordionItem(title='Exploit')
-		page3 = AccordionItem(title='ADB Test')
+		page3 = AccordionItem(title='Test')
 		
 		##Page 1
 		one = FloatLayout()
@@ -148,7 +156,9 @@ class SploitApp(App):
 		##Page 3 -- ADB test
 		three = FloatLayout()
 		adbtestbut = Button(text=str('Test ADB'), size_hint=(0.3, 0.3), pos_hint={'x':0.35, 'y':0.4})
+		camtestbut = Button(text=str('Test ADB'), size_hint=(0.3, 0.3), pos_hint={'x':0.35, 'y':0.4})
 		three.add_widget(adbtestbut)
+		three.add_widget(camtestbut)
 		page3.add_widget(three)
 		
 		##Add both pages to accordion
@@ -161,6 +171,7 @@ class SploitApp(App):
 		patbut.bind(on_release=self.popup())
 		adbbut.bind(on_release=self.popup_adb)
 		adbtestbut.bind(on_release=self.popup_testadb)
+		camtestbut.bind(on_release=self.testcam)
 		
 		##Make all the widgets magically appear
 		self.root = FloatLayout(orientation='vertical', spacing=20, padding=20)
