@@ -1,0 +1,7 @@
+/** Automatically generated file. DO NOT MODIFY */
+package com.os3.pokeadroid;
+
+public final class BuildConfig {
+    public final static boolean DEBUG = true;
+
+}
