@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="hello_world" >Hello!</string>
-    <string name="app_name" >Pokea-A-Droid </string>
+    <string name="app_name" >Poke-A-Droid </string>
     <string name="action_settings" >Settings </string>
     <string name="welcome" >Welcome to our OT project app!</string>
     <string name="devoptions" >1. Check if dev options are enabled</string>
@@ -13,4 +12,5 @@
 	<!-- Buttons -->
     <string name="check" >Check!</string>
     <string name="run" >Run!</string>
+    <string name="loop" >Start loop!</string>
 </resources>
