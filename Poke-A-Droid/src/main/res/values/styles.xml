@@ -1,5 +1,4 @@
 <resources>
-
     <!--
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -16,5 +15,19 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-
+    <!-- Table Rows -->
+    <style name="EvenRow" parent="AppBaseTheme">
+            <item name="android:layout_width">fill_parent</item>
+            <item name="android:layout_height">wrap_content</item>
+            <item name="android:background">#FFFFFF</item>
+            <item name="android:padding">5dip</item>
+    </style>
+        <style name="UnEvenRow" parent="EvenRow">
+            <item name="android:background">#DDDDDD</item>
+        </style>
+    <!-- Horizontal Line -->
+    <style name="HorizontalLine" parent="AppBaseTheme">
+        <item name="android:layout_height">1dip</item>
+        <item name="android:background">#666666</item>
+    </style>
 </resources>
