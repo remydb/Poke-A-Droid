@@ -18,8 +18,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:onClick="onClick"
-            android:text="Make Photo" />
+            android:onClick="photoLoop"
+            android:text="Start photo loop" />
     <FrameLayout
             android:id="@+id/cameraView"
             android:layout_width="fill_parent"

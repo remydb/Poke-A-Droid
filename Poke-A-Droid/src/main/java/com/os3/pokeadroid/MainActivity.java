@@ -15,6 +15,9 @@ import android.hardware.Camera.ShutterCallback;
 import android.widget.FrameLayout;
 import com.os3.pokeadroid.R;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class MainActivity extends Activity {
     final static String DEBUG_TAG = "MainActivity";
     private Camera camera;
@@ -51,9 +54,29 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void onClick(View view) {
+   /* public void onClick(View view) {
         camera.takePicture(myShutterCallback, myPictureCallback_RAW,
                 new PhotoHandler(getApplicationContext()));
+    }*/
+
+    public void calibrate() {
+        /* Calibrate the camera for different screens
+
+         */
+    }
+
+    public void photoLoop(View view) {
+        Timer myTimer = new Timer();
+        myTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                camera.takePicture(myShutterCallback, myPictureCallback_RAW,
+                        new PhotoHandler(getApplicationContext()));
+                CamCallback camCallback = new CamCallback();
+                camera.setPreviewCallback(camCallback);
+            }
+        }, 0, 5000);
+
     }
 
     ShutterCallback myShutterCallback = new ShutterCallback(){
