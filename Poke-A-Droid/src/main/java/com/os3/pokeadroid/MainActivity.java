@@ -50,7 +50,6 @@ public class MainActivity extends Activity {
                 // Attach a callback for preview
                 CamCallback camCallback = new CamCallback();
                 camera.setPreviewCallback(camCallback);
-
             }
         }
     }
@@ -72,10 +71,9 @@ public class MainActivity extends Activity {
             @Override
             public void run() {
                 //if (PicID == 0){
-                String filePartName = "pic00";
+                String filePartName = "testpic";
                 camera.takePicture(myShutterCallback, myPictureCallback_RAW,
                         new PhotoHandler(getApplicationContext(), filePartName));
-                camera.startPreview();
             }
         }, 0, 5000);
 

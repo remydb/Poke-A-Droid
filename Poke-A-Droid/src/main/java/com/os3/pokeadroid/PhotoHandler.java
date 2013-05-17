@@ -24,7 +24,7 @@ public class PhotoHandler implements PictureCallback {
 
     @Override
     public void onPictureTaken(byte[] data, Camera camera) {
-
+        camera.startPreview();
         File pictureFileDir = getDir();
 
         if (!pictureFileDir.exists() && !pictureFileDir.mkdirs()) {
@@ -36,9 +36,9 @@ public class PhotoHandler implements PictureCallback {
 
         }
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyymmddhhmmss");
-        String date = dateFormat.format(new Date());
-        String photoFile = "Picture_" + date + ".jpg";
+        /*SimpleDateFormat dateFormat = new SimpleDateFormat("yyyymmddhhmmss");
+        String date = dateFormat.format(new Date());*/
+        String photoFile = "Picture_" + filePartName + ".jpg";
 
         String filename = pictureFileDir.getPath() + File.separator + photoFile;
 
