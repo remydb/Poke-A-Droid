@@ -22,6 +22,7 @@ public class MainActivity extends Activity {
     final static String DEBUG_TAG = "MainActivity";
     private Camera camera;
     private int cameraId = 0;
+    private int PicID = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,10 +71,11 @@ public class MainActivity extends Activity {
         myTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
+                //if (PicID == 0){
+                String filePartName = "pic00";
                 camera.takePicture(myShutterCallback, myPictureCallback_RAW,
-                        new PhotoHandler(getApplicationContext()));
-                CamCallback camCallback = new CamCallback();
-                camera.setPreviewCallback(camCallback);
+                        new PhotoHandler(getApplicationContext(), filePartName));
+                camera.startPreview();
             }
         }, 0, 5000);
 

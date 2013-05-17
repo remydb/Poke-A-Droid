@@ -15,9 +15,11 @@ import android.widget.Toast;
 public class PhotoHandler implements PictureCallback {
 
     private final Context context;
+    private final String filePartName;
 
-    public PhotoHandler(Context context) {
+    public PhotoHandler(Context context, String filePartName) {
         this.context = context;
+        this.filePartName = filePartName;
     }
 
     @Override
