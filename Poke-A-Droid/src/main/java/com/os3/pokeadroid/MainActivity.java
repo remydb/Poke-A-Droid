@@ -15,12 +15,19 @@ import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.widget.FrameLayout;
 import com.os3.pokeadroid.R;
+import android.app.Dialog;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends Activity {
     final static String DEBUG_TAG = "MainActivity";
+    final Context context = this;
+    private Button button;
     private Camera camera;
     private int cameraId = 0;
 
@@ -29,7 +36,60 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // do we have a camera?
+        button = (Button) findViewById(R.id.bruteForce);
+
+        // add button listener
+        button.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+                // custom dialog
+                final Dialog dialog = new Dialog(context);
+                dialog.setContentView(R.layout.popup);
+                dialog.setTitle("Bruteforce");
+
+                Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+                // if button is clicked, close the custom dialog
+                dialogButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        photoLoop();
+                    }
+                });
+
+                Button cregButton = (Button) dialog.findViewById(R.id.creg);
+                // if button is clicked, close the custom dialog
+                cregButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        calib_reg();
+                    }
+                });
+
+                Button cpopupButton = (Button) dialog.findViewById(R.id.cpopup);
+                // if button is clicked, close the custom dialog
+                cpopupButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        calib_popup();
+                    }
+                });
+
+                Button cdimButton = (Button) dialog.findViewById(R.id.cdimmed);
+                // if button is clicked, close the custom dialog
+                cdimButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        calib_dim();
+                    }
+                });
+
+                dialog.show();
+            }
+        });
+
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             Toast.makeText(this, "No camera on this device", Toast.LENGTH_LONG).show();
         } else {
@@ -58,18 +118,25 @@ public class MainActivity extends Activity {
         }
     }
 
-   /* public void onClick(View view) {
+    public void calib_reg() {
+        String filePartName = "creg";
         camera.takePicture(myShutterCallback, myPictureCallback_RAW,
-                new PhotoHandler(getApplicationContext()));
-    }*/
-
-    public void calibrate() {
-        /* Calibrate the camera for different screens
-
-         */
+                new PhotoHandler(getApplicationContext(), filePartName));
     }
 
-    public void photoLoop(View view) {
+    public void calib_popup() {
+        String filePartName = "cpop";
+        camera.takePicture(myShutterCallback, myPictureCallback_RAW,
+                new PhotoHandler(getApplicationContext(), filePartName));
+    }
+
+    public void calib_dim() {
+        String filePartName = "cdim";
+        camera.takePicture(myShutterCallback, myPictureCallback_RAW,
+                new PhotoHandler(getApplicationContext(), filePartName));
+    }
+
+    public void photoLoop() {
         Timer myTimer = new Timer();
         myTimer.scheduleAtFixedRate(new TimerTask() {
             @Override

@@ -8,7 +8,13 @@
     <string name="root" >2. Check root permissions</string>
     <string name="remove" >2.1 Remove password or gesture</string>
     <string name="retrieve" >2.2 Retrieve pattern</string>
-    <string name="bruteforce" >3. Start bruteforce</string>    
+    <string name="bruteforce" >3. Bruteforce</string>
+    <string name="cregular">Regular screen</string>
+    <string name="cdimmed">Dimmed screen</string>
+    <string name="cpopup">Popup screen</string>
+    <string name="calib">Calibration</string>
+    <string name="business">The business</string>
+    <string name="gogo">Go!</string>
 	<!-- Buttons -->
     <string name="check" >Check!</string>
     <string name="run" >Run!</string>

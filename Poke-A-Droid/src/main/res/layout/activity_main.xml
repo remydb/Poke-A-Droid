@@ -63,10 +63,9 @@
             android:layout_below="@+id/button3" android:layout_alignLeft="@+id/button3"
             android:layout_alignRight="@+id/button3"/>
     <Button
-            android:id="@+id/captureBack"
+            android:id="@+id/bruteForce"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="photoLoop"
             android:text="@string/bruteforce"
             android:layout_below="@+id/button4" android:layout_alignLeft="@+id/button4"
             android:layout_alignRight="@+id/button4"/>
