@@ -3,6 +3,7 @@ package com.os3.pokeadroid;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.os.Bundle;
@@ -22,7 +23,6 @@ public class MainActivity extends Activity {
     final static String DEBUG_TAG = "MainActivity";
     private Camera camera;
     private int cameraId = 0;
-    private int PicID = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,6 +39,10 @@ public class MainActivity extends Activity {
                         Toast.LENGTH_LONG).show();
             } else {
                 camera = Camera.open(cameraId);
+                Camera.Parameters parameters = camera.getParameters();
+                parameters.set("orientation", "portrait");
+                parameters.setRotation(90);
+                camera.setParameters(parameters);
                 CamPreview camPreview = new CamPreview(getApplicationContext(),camera);
                 camPreview.setSurfaceTextureListener(camPreview);
 
