@@ -72,6 +72,9 @@ int main(void)
 	// TCCR0B = 0x05;
 	// TIMSK0 = (1<<TOIE0);
 
+	//First send enter to turn on screen
+	usb_keyboard_press(KEY_ENTER, 0);
+
 	for (int i = 0; i <= 9; i++)
 	{
 		for (int j = 0; j <= 9; j++)
@@ -90,7 +93,7 @@ int main(void)
 					else if (i == 7){usb_keyboard_press(KEY_7, 0);}
 					else if (i == 8){usb_keyboard_press(KEY_8, 0);}
 					else if (i == 9){usb_keyboard_press(KEY_9, 0);}
-					_delay_ms(50);
+					//_delay_ms(50);
 
 					if (j == 0) {usb_keyboard_press(KEY_0, 0);}
 					else if (j == 1){usb_keyboard_press(KEY_1, 0);}
@@ -102,7 +105,7 @@ int main(void)
 					else if (j == 7){usb_keyboard_press(KEY_7, 0);}
 					else if (j == 8){usb_keyboard_press(KEY_8, 0);}
 					else if (j == 9){usb_keyboard_press(KEY_9, 0);}
-					_delay_ms(50);
+					//_delay_ms(50);
 
 					if (k == 0) {usb_keyboard_press(KEY_0, 0);}
 					else if (k == 1){usb_keyboard_press(KEY_1, 0);}
@@ -114,7 +117,7 @@ int main(void)
 					else if (k == 7){usb_keyboard_press(KEY_7, 0);}
 					else if (k == 8){usb_keyboard_press(KEY_8, 0);}
 					else if (k == 9){usb_keyboard_press(KEY_9, 0);}
-					_delay_ms(50);
+					//_delay_ms(50);
 
 					if (l == 0) {usb_keyboard_press(KEY_0, 0);}
 					else if (l == 1){usb_keyboard_press(KEY_1, 0);}
@@ -126,13 +129,13 @@ int main(void)
 					else if (l == 7){usb_keyboard_press(KEY_7, 0);}
 					else if (l == 8){usb_keyboard_press(KEY_8, 0);}
 					else if (l == 9){usb_keyboard_press(KEY_9, 0);}
-					_delay_ms(50);
+					//_delay_ms(50);
 
 					usb_keyboard_press(KEY_ENTER, 0);
 
 					lockout_counter++;
 
-					_delay_ms(1000);
+					_delay_ms(50);
 
 					if (lockout_counter == 5){
 						lockout_counter = 0;
