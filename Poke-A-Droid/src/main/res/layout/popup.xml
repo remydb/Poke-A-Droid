@@ -51,7 +51,7 @@
             android:id="@+id/view2"
             android:layout_below="@+id/textView2" android:layout_alignParentLeft="true"/>
     <Button
-            android:id="@+id/dialogButtonOK"
+            android:id="@+id/brutemenuButtonOK"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/gogo"

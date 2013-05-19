@@ -15,6 +15,7 @@
     <string name="calib">Calibration</string>
     <string name="business">The business</string>
     <string name="gogo">Go!</string>
+    <string name="cancel">Cancel</string>
 	<!-- Buttons -->
     <string name="check" >Check!</string>
     <string name="run" >Run!</string>
