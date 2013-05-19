@@ -27,16 +27,18 @@ import java.util.TimerTask;
 public class MainActivity extends Activity {
     final static String DEBUG_TAG = "MainActivity";
     final Context context = this;
-    private Button button;
     private Camera camera;
-    private int cameraId = 0;
+    private int loopCount = 0;
+    private int codeCount = 0;
+    //private Button button;
+    //private int cameraId = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        button = (Button) findViewById(R.id.bruteForce);
+        Button button = (Button) findViewById(R.id.bruteForce);
 
         // add button listener
         button.setOnClickListener(new OnClickListener() {
@@ -64,7 +66,7 @@ public class MainActivity extends Activity {
                 cregButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        calib_reg();
+                        takePicture("creg");
                     }
                 });
 
@@ -73,7 +75,7 @@ public class MainActivity extends Activity {
                 cpopupButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        calib_popup();
+                        takePicture("cpopup");
                     }
                 });
 
@@ -82,7 +84,7 @@ public class MainActivity extends Activity {
                 cdimButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        calib_dim();
+                        takePicture("cdim");
                     }
                 });
 
@@ -93,7 +95,7 @@ public class MainActivity extends Activity {
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             Toast.makeText(this, "No camera on this device", Toast.LENGTH_LONG).show();
         } else {
-            cameraId = findBackFacingCamera();
+            Integer cameraId = findBackFacingCamera();
             if (cameraId < 0) {
                 Toast.makeText(this, "No back facing camera found.",
                         Toast.LENGTH_LONG).show();
@@ -118,20 +120,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void calib_reg() {
-        String filePartName = "creg";
-        camera.takePicture(myShutterCallback, myPictureCallback_RAW,
-                new PhotoHandler(getApplicationContext(), filePartName));
-    }
-
-    public void calib_popup() {
-        String filePartName = "cpop";
-        camera.takePicture(myShutterCallback, myPictureCallback_RAW,
-                new PhotoHandler(getApplicationContext(), filePartName));
-    }
-
-    public void calib_dim() {
-        String filePartName = "cdim";
+    public void takePicture(String filePartName) {
         camera.takePicture(myShutterCallback, myPictureCallback_RAW,
                 new PhotoHandler(getApplicationContext(), filePartName));
     }
@@ -141,10 +130,13 @@ public class MainActivity extends Activity {
         myTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                //if (PicID == 0){
-                String filePartName = "testpic";
-                camera.takePicture(myShutterCallback, myPictureCallback_RAW,
-                        new PhotoHandler(getApplicationContext(), filePartName));
+                loopCount++;
+                takePicture("testpic");
+                if (loopCount == 6){
+                    loopCount = 0;
+                    codeCount = codeCount + 5;
+                }
+                //Insert code for image comparison
             }
         }, 0, 5000);
 
@@ -168,7 +160,6 @@ public class MainActivity extends Activity {
 
     private int findBackFacingCamera() {
         int cameraId = -1;
-        // Search for the front facing camera
         int numberOfCameras = Camera.getNumberOfCameras();
         for (int i = 0; i < numberOfCameras; i++) {
             CameraInfo info = new CameraInfo();
