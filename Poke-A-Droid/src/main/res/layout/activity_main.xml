@@ -31,42 +31,42 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/devoptions"
-            android:id="@+id/button"
+            android:id="@+id/devoptions"
             android:layout_below="@+id/textView" android:layout_alignParentLeft="true"
             android:layout_alignRight="@+id/cameraView"/>
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/inject"
-            android:id="@+id/button1"
-            android:layout_below="@+id/button" android:layout_alignLeft="@+id/button"
-            android:layout_alignRight="@+id/button"/>
+            android:id="@+id/inject"
+            android:layout_below="@+id/devoptions" android:layout_alignLeft="@+id/devoptions"
+            android:layout_alignRight="@+id/devoptions"/>
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/root"
-            android:id="@+id/button2"
-            android:layout_below="@+id/button1" android:layout_alignLeft="@+id/button1"
-            android:layout_alignRight="@+id/button1"/>
+            android:id="@+id/root"
+            android:layout_below="@+id/inject" android:layout_alignLeft="@+id/inject"
+            android:layout_alignRight="@+id/inject"/>
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/remove"
-            android:id="@+id/button3"
-            android:layout_below="@+id/button2" android:layout_alignLeft="@+id/button2"
-            android:layout_alignRight="@+id/button2"/>
+            android:id="@+id/remove"
+            android:layout_below="@+id/root" android:layout_alignLeft="@+id/root"
+            android:layout_alignRight="@+id/root"/>
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/retrieve"
-            android:id="@+id/button4"
-            android:layout_below="@+id/button3" android:layout_alignLeft="@+id/button3"
-            android:layout_alignRight="@+id/button3"/>
+            android:id="@+id/retrieve"
+            android:layout_below="@+id/remove" android:layout_alignLeft="@+id/remove"
+            android:layout_alignRight="@+id/remove"/>
     <Button
             android:id="@+id/bruteForce"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/bruteforce"
-            android:layout_below="@+id/button4" android:layout_alignLeft="@+id/button4"
-            android:layout_alignRight="@+id/button4"/>
+            android:layout_below="@+id/retrieve" android:layout_alignLeft="@+id/retrieve"
+            android:layout_alignRight="@+id/retrieve"/>
 </RelativeLayout>

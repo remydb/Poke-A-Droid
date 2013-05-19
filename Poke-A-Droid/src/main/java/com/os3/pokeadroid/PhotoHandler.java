@@ -64,8 +64,31 @@ public class PhotoHandler implements PictureCallback {
                     Toast.LENGTH_LONG).show();
         }
         if (doCompare){
-        PhotoCompare(filename);
+            PhotoCompare(filename, "creg");
+            PhotoCompare(filename, "cpopup");
+            PhotoCompare(filename, "cdim");
         }
+        /*
+        Above is testing code, below actual code for end product:
+        if (doCompare){
+            if (PhotoCompare(filename, "creg") == 1) {
+                return;
+            }
+            if (PhotoCompare(filename, "cpopup") == 1) {
+                return;
+            }
+            if (PhotoCompare(filename, "cdim") == 1) {
+                return;
+            }
+            else {
+                String resultfile = pictureFileDir.getPath() + File.separator + code.txt;
+                BufferedWriter out = new BufferedWriter(new FileWriter(resultfile));
+                out.write("The code is within %d and %d", codeCount -5, codecount);
+                out.close();
+            }
+        }
+
+         */
     }
 
     private File getDir() {
@@ -74,10 +97,10 @@ public class PhotoHandler implements PictureCallback {
         return new File(sdDir, "PokeADroid");
     }
 
-    private void PhotoCompare(String filename2) {
+    private void PhotoCompare(String filename2, String part) {
 
         File pictureFileDir = getDir();
-        String filename1 = pictureFileDir.getPath() + File.separator + "creg.jpg";
+        String filename1 = pictureFileDir.getPath() + File.separator + part + ".jpg";
         //String filename2 = pictureFileDir.getPath() + File.separator + part + ".jpg";
         //Load images to compare
         Mat img1 = Highgui.imread(filename1, Highgui.CV_LOAD_IMAGE_GRAYSCALE);

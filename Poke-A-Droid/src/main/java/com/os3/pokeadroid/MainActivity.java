@@ -3,40 +3,28 @@ package com.os3.pokeadroid;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-//import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-//import android.view.SurfaceView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.widget.FrameLayout;
-//import com.os3.pokeadroid.R;
 import android.app.Dialog;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-//import android.widget.ImageView;
-//import android.widget.TextView;
-//import org.opencv.core.Core;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfDMatch;
-import org.opencv.core.MatOfKeyPoint;
-import org.opencv.features2d.DescriptorExtractor;
-import org.opencv.features2d.DescriptorMatcher;
-import org.opencv.features2d.FeatureDetector;
-import org.opencv.highgui.Highgui;
 
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -46,12 +34,8 @@ public class MainActivity extends Activity {
     private Timer myTimer = new Timer();
     private Camera camera;
     public TextView currenttext;
-    //Handler handler=new Handler();
-    //private Dialog bruteprog;
     private int loopCount = 0;
-    private int codeCount = 0;
-    //private Button button;
-    //private int cameraId = 0;
+    protected int codeCount = 0;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
 
@@ -62,9 +46,6 @@ public class MainActivity extends Activity {
                 {
                     Log.i(DEBUG_TAG, "OpenCV loaded successfully");
 
-                    /* Now enable camera view to start receiving frames
-                    mOpenCvCameraView.setOnTouchListener(Puzzle15Activity.this);
-                    mOpenCvCameraView.enableView();*/
                 } break;
                 default:
                 {
@@ -80,6 +61,37 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ////////////////////////////////////
+        //Configure check dev options button
+        ////////////////////////////////////
+//        Button checkdevbutton = (Button) findViewById(R.id.devoptions);
+//        checkdevbutton.setOnClickListener(new OnClickListener() {
+//
+//            @Override
+//            public void onClick(View arg0)
+//            {
+//                //***********************
+//                try
+//                {
+//                    Runtime rt = Runtime.getRuntime();
+//                    Process proc = rt.exec("su");
+//
+//                    proc = rt.exec("sh /data/shTest.sh");
+//                    InputStream is = proc.getInputStream();
+//                    InputStreamReader isr = new InputStreamReader(is);
+//                    BufferedReader br = new BufferedReader(isr);
+//                    String line;
+//
+//                    while ((line = br.readLine()) != null) {
+//                        System.out.println(line);
+//                    }
+//                } catch (Throwable t)
+//                {
+//                    t.printStackTrace();
+//                }
+//            }
+//        });
+
         ///////////////////////////////////////
         // Segment for bruteforce menu/progress
         ///////////////////////////////////////
@@ -91,13 +103,11 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View arg0) {
 
-                // custom brutemenu
                 final Dialog brutemenu = new Dialog(context);
                 brutemenu.setContentView(R.layout.popup);
                 brutemenu.setTitle("Bruteforce");
 
                 Button dialogButton = (Button) brutemenu.findViewById(R.id.brutemenuButtonOK);
-                // if button is clicked, close the custom brutemenu
                 dialogButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View arg0) {
@@ -117,7 +127,6 @@ public class MainActivity extends Activity {
                 });
 
                 Button cregButton = (Button) brutemenu.findViewById(R.id.creg);
-                // if button is clicked, close the custom brutemenu
                 cregButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -126,7 +135,6 @@ public class MainActivity extends Activity {
                 });
 
                 Button cpopupButton = (Button) brutemenu.findViewById(R.id.cpopup);
-                // if button is clicked, close the custom brutemenu
                 cpopupButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -135,7 +143,6 @@ public class MainActivity extends Activity {
                 });
 
                 Button cdimButton = (Button) brutemenu.findViewById(R.id.cdimmed);
-                // if button is clicked, close the custom brutemenu
                 cdimButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -150,6 +157,9 @@ public class MainActivity extends Activity {
 
         });
 
+        //////////////////
+        //Configure camera
+        //////////////////
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             Toast.makeText(this, "No camera on this device", Toast.LENGTH_LONG).show();
         } else {
@@ -198,12 +208,12 @@ public class MainActivity extends Activity {
                 viewupdateHandler.sendEmptyMessage(0);
                 loopCount++;
                 takePicture("testpic", true);
-                if (loopCount == 6){
+                if (loopCount == 2){
                     loopCount = 0;
                     codeCount = codeCount + 5;
                 }
             }
-        }, 0, 5000);
+        }, 0, 15000);
     }
 
     ShutterCallback myShutterCallback = new ShutterCallback(){
