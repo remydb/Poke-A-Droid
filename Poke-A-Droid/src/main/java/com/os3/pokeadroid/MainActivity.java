@@ -3,9 +3,11 @@ package com.os3.pokeadroid;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -22,9 +24,7 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -34,8 +34,11 @@ public class MainActivity extends Activity {
     private Timer myTimer = new Timer();
     private Camera camera;
     public TextView currenttext;
+    private TextView shellout;
     private int loopCount = 0;
     protected int codeCount = 0;
+    private String scriptdir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/com.os3.pokeadroid/files/";
+    private Runtime rt = Runtime.getRuntime();
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
 
@@ -61,36 +64,92 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+//        try {
+//            rt.exec("su");
+//        }
+//        catch(Exception e){
+//            e.printStackTrace();
+//        }
+
+        installScripts();
+
         ////////////////////////////////////
         //Configure check dev options button
         ////////////////////////////////////
-//        Button checkdevbutton = (Button) findViewById(R.id.devoptions);
-//        checkdevbutton.setOnClickListener(new OnClickListener() {
-//
-//            @Override
-//            public void onClick(View arg0)
-//            {
-//                //***********************
-//                try
-//                {
-//                    Runtime rt = Runtime.getRuntime();
-//                    Process proc = rt.exec("su");
-//
-//                    proc = rt.exec("sh /data/shTest.sh");
-//                    InputStream is = proc.getInputStream();
-//                    InputStreamReader isr = new InputStreamReader(is);
-//                    BufferedReader br = new BufferedReader(isr);
-//                    String line;
-//
-//                    while ((line = br.readLine()) != null) {
-//                        System.out.println(line);
-//                    }
-//                } catch (Throwable t)
-//                {
-//                    t.printStackTrace();
-//                }
-//            }
-//        });
+        Button checkdevbutton = (Button) findViewById(R.id.devoptions);
+        checkdevbutton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                final Dialog shellpopup = new Dialog(context);
+                shellpopup.setContentView(R.layout.shell_popup);
+                shellpopup.setTitle("Output");
+                shellout = (TextView) shellpopup.findViewById(R.id.shellText);
+                shellout.setText(" ");
+                Button okButton = (Button) shellpopup.findViewById(R.id.shellButtonOk);
+                okButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View arg0) {
+                        shellpopup.dismiss();
+                    }
+                });
+                //***********************
+                callscript("testdebug.sh");
+                shellpopup.show();
+            }
+        });
+
+        ////////////////////////////////////
+        //Configure inject APK button
+        ////////////////////////////////////
+        Button injectapkbutton = (Button) findViewById(R.id.inject);
+        injectapkbutton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                final Dialog shellpopup = new Dialog(context);
+                shellpopup.setContentView(R.layout.shell_popup);
+                shellpopup.setTitle("Output");
+                shellout = (TextView) shellpopup.findViewById(R.id.shellText);
+                shellout.setText(" ");
+                Button okButton = (Button) shellpopup.findViewById(R.id.shellButtonOk);
+                okButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View arg0) {
+                        shellpopup.dismiss();
+                    }
+                });
+                //***********************
+                callscript("installAnti.sh");
+                shellpopup.show();
+            }
+        });
+
+        ////////////////////////////////////
+        //Configure check root button
+        ////////////////////////////////////
+        Button checkrootbutton = (Button) findViewById(R.id.root);
+        checkrootbutton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                final Dialog shellpopup = new Dialog(context);
+                shellpopup.setContentView(R.layout.shell_popup);
+                shellpopup.setTitle("Output");
+                shellout = (TextView) shellpopup.findViewById(R.id.shellText);
+                shellout.setText(" ");
+                Button okButton = (Button) shellpopup.findViewById(R.id.shellButtonOk);
+                okButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View arg0) {
+                        shellpopup.dismiss();
+                    }
+                });
+                //***********************
+                callscript("testroot.sh");
+                shellpopup.show();
+            }
+        });
 
         ///////////////////////////////////////
         // Segment for bruteforce menu/progress
@@ -103,6 +162,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View arg0) {
 
+                confCamera();
+
                 final Dialog brutemenu = new Dialog(context);
                 brutemenu.setContentView(R.layout.popup);
                 brutemenu.setTitle("Bruteforce");
@@ -111,6 +172,7 @@ public class MainActivity extends Activity {
                 dialogButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View arg0) {
+
                         brutemenu.setContentView(R.layout.bruteprog);
                         brutemenu.setTitle("Progress");
                         currenttext = (TextView) brutemenu.findViewById(R.id.progText);
@@ -120,6 +182,7 @@ public class MainActivity extends Activity {
                             @Override
                             public void onClick(View v) {
                                 myTimer.cancel();
+                                camera.release();
                                 brutemenu.dismiss();
                             }
                         });
@@ -156,7 +219,60 @@ public class MainActivity extends Activity {
 
 
         });
+    }
 
+    private void callscript(String scriptname){
+        try
+        {
+            Process proc = rt.exec("/system/xbin/bash " + scriptdir + scriptname);
+            InputStream is = proc.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+                if (scriptname.equals("testdebug.sh")){
+                    shellout.append("Developer options are: " + line);
+                }
+                else{
+                    shellout.append(line);
+                }
+            }
+        } catch (Throwable t)
+        {
+            t.printStackTrace();
+        }
+    }
+
+    private void installScripts(){
+        File myFilesDir = new File(scriptdir);
+        myFilesDir.mkdirs();
+        try {
+            AssetManager am = getAssets();
+            String[] list = am.list("");
+            for (String s:list) {
+                //if (s.endsWith("sh")) {
+                    Log.d(DEBUG_TAG, "Copying asset file " + s);
+                    InputStream inStream = am.open(s);
+                    int size = inStream.available();
+                    byte[] buffer = new byte[size];
+                    inStream.read(buffer);
+                    inStream.close();
+                    FileOutputStream fos = new FileOutputStream(myFilesDir + File.separator + s);
+                    fos.write(buffer);
+                    fos.close();
+                //}
+            }
+        }
+        catch (Exception e) {
+            // Better to handle specific exceptions such as IOException etc
+            // as this is just a catch-all
+            e.printStackTrace();
+        }
+    }
+
+    private void confCamera(){
         //////////////////
         //Configure camera
         //////////////////
@@ -249,7 +365,9 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
-        myTimer.cancel();
+        if (myTimer != null) {
+            myTimer.cancel();
+        }
         if (camera != null) {
             camera.release();
             camera = null;
@@ -259,7 +377,9 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onStop() {
-        myTimer.cancel();
+        if (myTimer != null) {
+            myTimer.cancel();
+        }
         if (camera != null) {
             camera.release();
             camera = null;

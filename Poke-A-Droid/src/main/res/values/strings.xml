@@ -16,6 +16,7 @@
     <string name="business">The business</string>
     <string name="gogo">Go!</string>
     <string name="cancel">Cancel</string>
+    <string name="ok">Ok</string>
 	<!-- Buttons -->
     <string name="check" >Check!</string>
     <string name="run" >Run!</string>
