@@ -6,25 +6,20 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
+import android.os.*;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
-import android.widget.FrameLayout;
 import android.app.Dialog;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 
 import java.io.*;
+import java.lang.Process;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -38,8 +33,15 @@ public class MainActivity extends Activity {
     private TextView shellout;
     private int loopCount = 0;
     protected int codeCount = 0;
+    private int hasDevOpt = 0;
+    private int hasRoot = 0;
     private String scriptdir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/com.os3.pokeadroid/files/";
-    private Runtime rt = Runtime.getRuntime();
+    private Button injectapkbutton;
+    private Button checkrootbutton;
+    private Button removelockbutton;
+    private Button getgesturebutton;
+    protected Button okButton;
+    protected ProgressBar shellprogress;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
 
@@ -65,13 +67,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        try {
-//            rt.exec("su");
-//        }
-//        catch(Exception e){
-//            e.printStackTrace();
-//        }
-
         installScripts();
 
         ////////////////////////////////////
@@ -87,23 +82,23 @@ public class MainActivity extends Activity {
                 shellpopup.setTitle("Output");
                 shellout = (TextView) shellpopup.findViewById(R.id.shellText);
                 shellout.setText(" ");
-                Button okButton = (Button) shellpopup.findViewById(R.id.shellButtonOk);
+                okButton = (Button) shellpopup.findViewById(R.id.shellButtonOk);
                 okButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View arg0) {
                         shellpopup.dismiss();
                     }
                 });
-                //***********************
-                callscript("testdebug.sh");
+                shellprogress = (ProgressBar) shellpopup.findViewById(R.id.shellProgress);
                 shellpopup.show();
+                new checkDevAsync().execute();
             }
         });
 
         ////////////////////////////////////
         //Configure inject APK button
         ////////////////////////////////////
-        Button injectapkbutton = (Button) findViewById(R.id.inject);
+        injectapkbutton = (Button) findViewById(R.id.inject);
         injectapkbutton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -113,23 +108,24 @@ public class MainActivity extends Activity {
                 shellpopup.setTitle("Output");
                 shellout = (TextView) shellpopup.findViewById(R.id.shellText);
                 shellout.setText(" ");
-                Button okButton = (Button) shellpopup.findViewById(R.id.shellButtonOk);
+                okButton = (Button) shellpopup.findViewById(R.id.shellButtonOk);
                 okButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View arg0) {
                         shellpopup.dismiss();
                     }
                 });
-                //***********************
-                callscript("installAnti.sh");
+                okButton.setVisibility(View.INVISIBLE);
+                shellprogress = (ProgressBar) shellpopup.findViewById(R.id.shellProgress);
                 shellpopup.show();
+                new injectApkAsync().execute();
             }
         });
 
         ////////////////////////////////////
         //Configure check root button
         ////////////////////////////////////
-        Button checkrootbutton = (Button) findViewById(R.id.root);
+        checkrootbutton = (Button) findViewById(R.id.root);
         checkrootbutton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -139,23 +135,24 @@ public class MainActivity extends Activity {
                 shellpopup.setTitle("Output");
                 shellout = (TextView) shellpopup.findViewById(R.id.shellText);
                 shellout.setText(" ");
-                Button okButton = (Button) shellpopup.findViewById(R.id.shellButtonOk);
+                okButton = (Button) shellpopup.findViewById(R.id.shellButtonOk);
                 okButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View arg0) {
                         shellpopup.dismiss();
                     }
                 });
-                //***********************
-                callscript("testroot.sh");
+                okButton.setVisibility(View.INVISIBLE);
+                shellprogress = (ProgressBar) shellpopup.findViewById(R.id.shellProgress);
                 shellpopup.show();
+                new checkRootAsync().execute();
             }
         });
 
         //////////////////////////////////////////
         //Configure remove password/gesture button
         //////////////////////////////////////////
-        Button removelockbutton = (Button) findViewById(R.id.remove);
+        removelockbutton = (Button) findViewById(R.id.remove);
         removelockbutton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -165,23 +162,23 @@ public class MainActivity extends Activity {
                 shellpopup.setTitle("Output");
                 shellout = (TextView) shellpopup.findViewById(R.id.shellText);
                 shellout.setText(" ");
-                Button okButton = (Button) shellpopup.findViewById(R.id.shellButtonOk);
+                okButton = (Button) shellpopup.findViewById(R.id.shellButtonOk);
                 okButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View arg0) {
                         shellpopup.dismiss();
                     }
                 });
-                //***********************
-                callscript("removelock.sh");
+                shellprogress = (ProgressBar) shellpopup.findViewById(R.id.shellProgress);
                 shellpopup.show();
+                new removeLockAsync().execute();
             }
         });
 
         ////////////////////////////////////
         //Configure get gesture button
         ////////////////////////////////////
-        Button getgesturebutton = (Button) findViewById(R.id.retrieve);
+        getgesturebutton = (Button) findViewById(R.id.retrieve);
         getgesturebutton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -191,16 +188,17 @@ public class MainActivity extends Activity {
                 shellpopup.setTitle("Output");
                 shellout = (TextView) shellpopup.findViewById(R.id.shellText);
                 shellout.setText("Processing..");
-                Button okButton = (Button) shellpopup.findViewById(R.id.shellButtonOk);
+                okButton = (Button) shellpopup.findViewById(R.id.shellButtonOk);
+                okButton.setVisibility(View.INVISIBLE);
                 okButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View arg0) {
                         shellpopup.dismiss();
                     }
                 });
-                //***********************
+                shellprogress = (ProgressBar) shellpopup.findViewById(R.id.shellProgress);
                 shellpopup.show();
-                callscript("getgesture.sh");
+                new getGestureAsync().execute();
             }
         });
 
@@ -277,29 +275,235 @@ public class MainActivity extends Activity {
         });
     }
 
-    private void callscript(String scriptname){
-        try
-        {
-            Process proc = rt.exec("/system/xbin/bash " + scriptdir + scriptname);
-            InputStream is = proc.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-            String line;
+    private class checkDevAsync extends AsyncTask<Void, Void, String> {
+        protected String doInBackground(Void... params) {
+            Runtime rt = Runtime.getRuntime();
+            try{
+                Process proc = rt.exec("/system/xbin/bash " + scriptdir + "testdebug.sh");
+                InputStream is = proc.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (line.equals("ENABLED") || line.equals("RECOVERY") || line.equals("DISABLED")){
+                        System.out.println(line);
+                        return line;
+                    }
+                }
 
-            while ((line = br.readLine()) != null) {
-                System.out.println(line);
-                if (scriptname.equals("testdebug.sh")){
-                    shellout.append("Developer options are: " + line);
-                }
-                else{
-                    shellout.append(line);
-                }
             }
-        } catch (Throwable t)
-        {
-            t.printStackTrace();
+            catch (Exception e){
+                e.printStackTrace();
+            }
+            return "fail";
+        }
+
+        protected void onPostExecute(String result) {
+            shellprogress.setVisibility(View.GONE);
+            okButton.setVisibility(View.VISIBLE);
+            shellout.append("Developer options: " + result);
+            if (result.equals("ENABLED")) {
+                hasDevOpt = 1;
+            }
+            else if (result.equals("RECOVERY")) {
+                hasDevOpt = 2;
+            }
+            else if (result.equals("DISABLED")) {
+                hasDevOpt = 0;
+            }
+            setButtonStatus(0);
         }
     }
+
+    private class injectApkAsync extends AsyncTask<Void, Void, String> {
+        protected String doInBackground(Void... params) {
+            Runtime rt = Runtime.getRuntime();
+            try{
+                Process proc = rt.exec("/system/xbin/bash " + scriptdir + "installAnti.sh");
+                InputStream is = proc.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (line.equals("0")){
+                        System.out.println(line);
+                        return line;
+                    }
+                    return line;
+                }
+
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+            return "fail";
+        }
+
+        protected void onPostExecute(String result) {
+            shellprogress.setVisibility(View.GONE);
+            okButton.setVisibility(View.VISIBLE);
+            if (result.equals("0")) {
+                shellout.append("Success!");
+            }
+            else {
+                shellout.append("Failed");
+            }
+        }
+    }
+
+    private class checkRootAsync extends AsyncTask<Void, Void, String> {
+        protected String doInBackground(Void... params) {
+            Runtime rt = Runtime.getRuntime();
+            try{
+                Process proc = rt.exec("/system/xbin/bash " + scriptdir + "testroot.sh");
+                InputStream is = proc.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (line.equals("0") || line.equals("1") || line.equals("2")){
+                        System.out.println(line);
+                        return line;
+                    }
+                    return line;
+                }
+
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+            return "fail";
+        }
+
+        protected void onPostExecute(String result) {
+            shellprogress.setVisibility(View.GONE);
+            okButton.setVisibility(View.VISIBLE);
+            if (result.equals("0")) {
+                shellout.append("No root access");
+            }
+            else if (result.equals("1")) {
+                shellout.append("Native root access");
+            }
+            else if (result.equals("2")) {
+                shellout.append("Root access through privilege escalation");
+            }
+            else if (result.equals("3")){
+                shellout.append("Unknown state");
+            }
+        }
+    }
+
+    private class removeLockAsync extends AsyncTask<Void, Void, String> {
+        String scriptname;
+        protected String doInBackground(Void... params) {
+            if (hasRoot == 1){
+                scriptname = "removelock.sh";
+            }
+            else if (hasRoot == 2){
+                scriptname = "removelockesc.sh";
+            }
+            Runtime rt = Runtime.getRuntime();
+            try{
+                Process proc = rt.exec("/system/xbin/bash " + scriptdir + scriptname);
+                InputStream is = proc.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (line.equals("0")){
+                        System.out.println(line);
+                        return line;
+                    }
+                    return line;
+                }
+
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+            return "fail";
+        }
+
+        protected void onPostExecute(String result) {
+            shellprogress.setVisibility(View.GONE);
+            okButton.setVisibility(View.VISIBLE);
+            if (result.equals("0")) {
+                shellout.append("Success");
+            }
+            else {
+                shellout.append("Failed");
+            }
+        }
+    }
+
+    private class getGestureAsync extends AsyncTask<Void, Void, String> {
+        protected String doInBackground(Void... params) {
+            Runtime rt = Runtime.getRuntime();
+            try{
+                Process proc = rt.exec("/system/xbin/bash " + scriptdir + "getgesture.sh");
+                InputStream is = proc.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
+                String line;
+                while ((line = br.readLine()) != null) {
+                        System.out.println(line);
+                        return line;
+                }
+
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+            return "fail";
+        }
+
+        protected void onPostExecute(String result) {
+            shellprogress.setVisibility(View.GONE);
+            okButton.setVisibility(View.VISIBLE);
+            if (result.equals("fail")) {
+                shellout.append("Failed");
+            }
+            else {
+                shellout.append("Gesture: " + result);
+            }
+        }
+    }
+
+    private void setButtonStatus(int type){
+        if (type == 0){
+            if (hasDevOpt == 1){
+                injectapkbutton.setEnabled(true);
+                checkrootbutton.setEnabled(true);
+            }
+            else if (hasDevOpt == 2){
+                checkrootbutton.setEnabled(true);
+            }
+            else if (hasDevOpt == 0){
+                injectapkbutton.setEnabled(false);
+                checkrootbutton.setEnabled(false);
+                removelockbutton.setEnabled(false);
+                getgesturebutton.setEnabled(false);
+            }
+        }
+        else if (type == 1){
+            if (hasRoot == 1 || hasRoot == 2){
+                removelockbutton.setEnabled(true);
+                getgesturebutton.setEnabled(true);
+            }
+            else if (hasRoot == 0){
+                removelockbutton.setEnabled(false);
+                getgesturebutton.setEnabled(false);
+            }
+        }
+    }
+
+    private Handler viewupdateHandler = new Handler() {
+
+        public void handleMessage(Message msg) {
+            String progText = String.format("Current codes: %d - %d", codeCount, codeCount + 5);
+            currenttext.setText(progText);
+        }
+    };
 
     private void installScripts(){
         File myFilesDir = new File(scriptdir);
@@ -359,14 +563,6 @@ public class MainActivity extends Activity {
             }
         }
     }
-
-    private Handler viewupdateHandler = new Handler() {
-
-        public void handleMessage(Message msg) {
-            String progText = String.format("Current codes: %d - %d", codeCount, codeCount + 5);
-            currenttext.setText(progText);
-        }
-    };
 
     public void takePicture(String fileName, Boolean doCompare) {
         camera.takePicture(myShutterCallback, myPictureCallback_RAW,
@@ -452,6 +648,4 @@ public class MainActivity extends Activity {
         super.onResume();
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_3, this, mLoaderCallback);
     }
-
-
 }

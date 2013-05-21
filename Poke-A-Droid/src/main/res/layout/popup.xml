@@ -22,15 +22,17 @@
             android:text="@string/cregular"
             android:id="@+id/creg"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"/>
+            android:layout_marginTop="30dp"
+            android:layout_alignRight="@+id/cpopup"
+            android:layout_alignLeft="@+id/cpopup"/>
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/cpopup"
             android:id="@+id/cpopup"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/creg"/>
+            android:layout_below="@+id/creg"
+            android:layout_alignRight="@+id/cdimmed"
+            android:layout_alignLeft="@+id/cdimmed"/>
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -56,5 +58,6 @@
             android:layout_height="wrap_content"
             android:text="@string/gogo"
             android:layout_below="@+id/view2"
-            android:layout_centerHorizontal="true"/>
+            android:layout_alignLeft="@+id/cdimmed"
+            android:layout_alignRight="@+id/cdimmed"/>
 </RelativeLayout>

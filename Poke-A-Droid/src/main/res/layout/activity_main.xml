@@ -40,28 +40,32 @@
             android:text="@string/inject"
             android:id="@+id/inject"
             android:layout_below="@+id/devoptions" android:layout_alignLeft="@+id/devoptions"
-            android:layout_alignRight="@+id/devoptions"/>
+            android:layout_alignRight="@+id/devoptions"
+            android:enabled="false"/>
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/root"
             android:id="@+id/root"
             android:layout_below="@+id/inject" android:layout_alignLeft="@+id/inject"
-            android:layout_alignRight="@+id/inject"/>
+            android:layout_alignRight="@+id/inject"
+            android:enabled="false"/>
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/remove"
             android:id="@+id/remove"
             android:layout_below="@+id/root" android:layout_alignLeft="@+id/root"
-            android:layout_alignRight="@+id/root"/>
+            android:layout_alignRight="@+id/root"
+            android:enabled="false"/>
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/retrieve"
             android:id="@+id/retrieve"
             android:layout_below="@+id/remove" android:layout_alignLeft="@+id/remove"
-            android:layout_alignRight="@+id/remove"/>
+            android:layout_alignRight="@+id/remove"
+            android:enabled="false"/>
     <Button
             android:id="@+id/bruteForce"
             android:layout_width="wrap_content"
