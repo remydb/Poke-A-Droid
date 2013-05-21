@@ -1,16 +1,7 @@
+#!/system/xbin/bash
 # p2p-adb
-# https://github.com/kosborn/p2p-adb/
-# @theKos
-# kyle@kyleosborn.com
 
-adb shell pm list packages | grep io.kos.antiguard 2>/dev/null > /dev/null
+cd "$(dirname "$0")"
 
-isInstalled=$?
-
-
-if [ $isInstalled -eq 0 ]; then
-	adb uninstall io.kos.antiguard
-else 
-	adb install ./AntiGuard.apk
-	adb shell am start io.kos.antiguard/.unlock
-fi
+adb install AntiGuard.apk 2>&1
+adb shell am start io.kos.antiguard/.unlock

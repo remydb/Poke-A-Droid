@@ -32,6 +32,7 @@ public class MainActivity extends Activity {
     final static String DEBUG_TAG = "MainActivity";
     final Context context = this;
     private Timer myTimer = new Timer();
+    private int timerRuns = 0;
     private Camera camera;
     public TextView currenttext;
     private TextView shellout;
@@ -151,6 +152,58 @@ public class MainActivity extends Activity {
             }
         });
 
+        //////////////////////////////////////////
+        //Configure remove password/gesture button
+        //////////////////////////////////////////
+        Button removelockbutton = (Button) findViewById(R.id.remove);
+        removelockbutton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                final Dialog shellpopup = new Dialog(context);
+                shellpopup.setContentView(R.layout.shell_popup);
+                shellpopup.setTitle("Output");
+                shellout = (TextView) shellpopup.findViewById(R.id.shellText);
+                shellout.setText(" ");
+                Button okButton = (Button) shellpopup.findViewById(R.id.shellButtonOk);
+                okButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View arg0) {
+                        shellpopup.dismiss();
+                    }
+                });
+                //***********************
+                callscript("removelock.sh");
+                shellpopup.show();
+            }
+        });
+
+        ////////////////////////////////////
+        //Configure get gesture button
+        ////////////////////////////////////
+        Button getgesturebutton = (Button) findViewById(R.id.retrieve);
+        getgesturebutton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                final Dialog shellpopup = new Dialog(context);
+                shellpopup.setContentView(R.layout.shell_popup);
+                shellpopup.setTitle("Output");
+                shellout = (TextView) shellpopup.findViewById(R.id.shellText);
+                shellout.setText("Processing..");
+                Button okButton = (Button) shellpopup.findViewById(R.id.shellButtonOk);
+                okButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View arg0) {
+                        shellpopup.dismiss();
+                    }
+                });
+                //***********************
+                shellpopup.show();
+                callscript("getgesture.sh");
+            }
+        });
+
         ///////////////////////////////////////
         // Segment for bruteforce menu/progress
         ///////////////////////////////////////
@@ -181,7 +234,10 @@ public class MainActivity extends Activity {
                         progButton.setOnClickListener(new OnClickListener(){
                             @Override
                             public void onClick(View v) {
-                                myTimer.cancel();
+                                if (timerRuns == 1){
+                                    myTimer.cancel();
+                                    myTimer = new Timer();
+                                }
                                 camera.release();
                                 brutemenu.dismiss();
                             }
@@ -252,7 +308,7 @@ public class MainActivity extends Activity {
             AssetManager am = getAssets();
             String[] list = am.list("");
             for (String s:list) {
-                //if (s.endsWith("sh")) {
+                if (s.endsWith("sh") || s.endsWith("apk") || s.endsWith("txt.gz")) {
                     Log.d(DEBUG_TAG, "Copying asset file " + s);
                     InputStream inStream = am.open(s);
                     int size = inStream.available();
@@ -262,7 +318,7 @@ public class MainActivity extends Activity {
                     FileOutputStream fos = new FileOutputStream(myFilesDir + File.separator + s);
                     fos.write(buffer);
                     fos.close();
-                //}
+                }
             }
         }
         catch (Exception e) {
@@ -318,6 +374,7 @@ public class MainActivity extends Activity {
     }
 
     public void photoLoop() {
+        timerRuns=1;
         myTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -365,8 +422,9 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
-        if (myTimer != null) {
+        if (timerRuns == 1) {
             myTimer.cancel();
+            myTimer = new Timer();
         }
         if (camera != null) {
             camera.release();
@@ -377,8 +435,9 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onStop() {
-        if (myTimer != null) {
+        if (timerRuns == 1) {
             myTimer.cancel();
+            myTimer = new Timer();
         }
         if (camera != null) {
             camera.release();
