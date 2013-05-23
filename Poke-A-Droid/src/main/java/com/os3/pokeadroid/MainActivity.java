@@ -187,7 +187,6 @@ public class MainActivity extends Activity {
                 shellpopup.setContentView(R.layout.shell_popup);
                 shellpopup.setTitle("Output");
                 shellout = (TextView) shellpopup.findViewById(R.id.shellText);
-                shellout.setText("Processing..");
                 okButton = (Button) shellpopup.findViewById(R.id.shellButtonOk);
                 okButton.setVisibility(View.INVISIBLE);
                 okButton.setOnClickListener(new OnClickListener() {
@@ -213,7 +212,9 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View arg0) {
 
-                confCamera();
+                if (camera == null){
+                    confCamera();
+                }
 
                 final Dialog brutemenu = new Dialog(context);
                 brutemenu.setContentView(R.layout.popup);
@@ -237,6 +238,7 @@ public class MainActivity extends Activity {
                                     myTimer = new Timer();
                                 }
                                 camera.release();
+                                camera = null;
                                 brutemenu.dismiss();
                             }
                         });
@@ -380,16 +382,21 @@ public class MainActivity extends Activity {
             okButton.setVisibility(View.VISIBLE);
             if (result.equals("0")) {
                 shellout.append("No root access");
+                hasRoot=0;
             }
             else if (result.equals("1")) {
                 shellout.append("Native root access");
+                hasRoot=1;
             }
             else if (result.equals("2")) {
                 shellout.append("Root access through privilege escalation");
+                hasRoot=2;
             }
             else if (result.equals("3")){
                 shellout.append("Unknown state");
+                hasRoot=0;
             }
+            setButtonStatus(1);
         }
     }
 
@@ -428,7 +435,7 @@ public class MainActivity extends Activity {
             shellprogress.setVisibility(View.GONE);
             okButton.setVisibility(View.VISIBLE);
             if (result.equals("0")) {
-                shellout.append("Success");
+                shellout.append("All key files removed");
             }
             else {
                 shellout.append("Failed");
@@ -462,6 +469,9 @@ public class MainActivity extends Activity {
             okButton.setVisibility(View.VISIBLE);
             if (result.equals("fail")) {
                 shellout.append("Failed");
+            }
+            else if (result.equals("1")){
+                shellout.append("Gesture table not found");
             }
             else {
                 shellout.append("Gesture: " + result);
@@ -544,22 +554,27 @@ public class MainActivity extends Activity {
                 Toast.makeText(this, "No back facing camera found.",
                         Toast.LENGTH_LONG).show();
             } else {
-                camera = Camera.open(cameraId);
-                Camera.Parameters parameters = camera.getParameters();
-                parameters.set("orientation", "portrait");
-                parameters.setRotation(90);
-                camera.setParameters(parameters);
-                CamPreview camPreview = new CamPreview(getApplicationContext(),camera);
-                camPreview.setSurfaceTextureListener(camPreview);
+                try {
+                    camera = Camera.open(cameraId);
+                    Camera.Parameters parameters = camera.getParameters();
+                    parameters.set("orientation", "portrait");
+                    parameters.setRotation(90);
+                    camera.setParameters(parameters);
+                    CamPreview camPreview = new CamPreview(getApplicationContext(),camera);
+                    camPreview.setSurfaceTextureListener(camPreview);
 
-                // Connect the preview object to a FrameLayout in your UI
-                // You'll have to create a FrameLayout object in your UI to place this preview in
-                FrameLayout preview = (FrameLayout) findViewById(R.id.cameraView);
-                preview.addView(camPreview);
+                    // Connect the preview object to a FrameLayout in your UI
+                    // You'll have to create a FrameLayout object in your UI to place this preview in
+                    FrameLayout preview = (FrameLayout) findViewById(R.id.cameraView);
+                    preview.addView(camPreview);
 
-                // Attach a callback for preview
-                CamCallback camCallback = new CamCallback();
-                camera.setPreviewCallback(camCallback);
+                    // Attach a callback for preview
+                    CamCallback camCallback = new CamCallback();
+                    camera.setPreviewCallback(camCallback);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -571,12 +586,16 @@ public class MainActivity extends Activity {
 
     public void photoLoop() {
         timerRuns=1;
+        loopCount=0;
+        codeCount=0;
         myTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 viewupdateHandler.sendEmptyMessage(0);
                 loopCount++;
-                takePicture("testpic", true);
+                if (camera != null) {
+                    takePicture("testpic", true);
+                }
                 if (loopCount == 2){
                     loopCount = 0;
                     codeCount = codeCount + 5;

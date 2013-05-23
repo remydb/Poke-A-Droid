@@ -1,5 +1,9 @@
 #!/system/xbin/bash
 
-adb shell 'su -c "rm /data/system/gesture.key"'
+RMKEY=$(adb shell 'su -c "rm /data/system/*.key"')
 
-echo $?
+if [ $? == 0 ]; then
+    echo 0
+else
+    echo -1
+fi
