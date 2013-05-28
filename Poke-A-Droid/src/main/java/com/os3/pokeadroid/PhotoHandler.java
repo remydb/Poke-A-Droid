@@ -1,7 +1,6 @@
 package com.os3.pokeadroid;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,11 +19,13 @@ public class PhotoHandler implements PictureCallback {
     private final Context context;
     private final String fileName;
     private final Boolean doCompare;
+    private final int codeCount;
 
-    public PhotoHandler(Context context, String fileName, Boolean doCompare) {
+    public PhotoHandler(Context context, String fileName, Boolean doCompare, int codeCount) {
         this.context = context;
         this.fileName = fileName;
         this.doCompare = doCompare;
+        this.codeCount = codeCount;
     }
 
     @Override
@@ -63,13 +64,13 @@ public class PhotoHandler implements PictureCallback {
             Toast.makeText(context, "Image could not be saved.",
                     Toast.LENGTH_LONG).show();
         }
-        if (doCompare){
+        /*if (doCompare){
             PhotoCompare(filename, "creg");
             PhotoCompare(filename, "cpopup");
             PhotoCompare(filename, "cdim");
-        }
-        /*
-        Above is testing code, below actual code for end product:
+        }*/
+
+        //Above is testing code, below actual code for end product:
         if (doCompare){
             if (PhotoCompare(filename, "creg") == 1) {
                 return;
@@ -81,14 +82,21 @@ public class PhotoHandler implements PictureCallback {
                 return;
             }
             else {
-                String resultfile = pictureFileDir.getPath() + File.separator + code.txt;
-                BufferedWriter out = new BufferedWriter(new FileWriter(resultfile));
-                out.write("The code is within %d and %d", codeCount -5, codecount);
-                out.close();
+                String resultfile = pictureFileDir.getPath() + File.separator +  "code.txt";
+                try{
+                    int codeCountupper = codeCount + 4;
+                    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(resultfile, true)));
+                    out.println("The code could be within " + codeCount + " and " + codeCountupper);
+                    out.close();
+                    Toast.makeText(context, "Possible code found, written to file",Toast.LENGTH_LONG).show();
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         }
 
-         */
+
     }
 
     private File getDir() {
@@ -97,7 +105,7 @@ public class PhotoHandler implements PictureCallback {
         return new File(sdDir, "PokeADroid");
     }
 
-    private void PhotoCompare(String filename2, String part) {
+    private int PhotoCompare(String filename2, String part) {
 
         File pictureFileDir = getDir();
         String filename1 = pictureFileDir.getPath() + File.separator + part + ".jpg";
@@ -148,6 +156,12 @@ public class PhotoHandler implements PictureCallback {
             }
         }
         Toast.makeText(context, "Non-Matching KeyPoints: " + nonMatchesList.size() + " of " + matchesList.size(),Toast.LENGTH_LONG).show();
+        if (nonMatchesList.size() > matchesList.size()/100*10){
+            return 0;
+        }
+        else{
+            return 1;
+        }
         //System.out.println("Matches: " + matches.size() + " of " + descriptors1.size());
     }
 }

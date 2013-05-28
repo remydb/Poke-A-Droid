@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
     public TextView currenttext;
     private TextView shellout;
     private int loopCount = 0;
-    protected int codeCount = 0;
+    private int codeCount = 0;
     private int hasDevOpt = 0;
     private int hasRoot = 0;
     private String scriptdir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/com.os3.pokeadroid/files/";
@@ -581,7 +581,7 @@ public class MainActivity extends Activity {
 
     public void takePicture(String fileName, Boolean doCompare) {
         camera.takePicture(myShutterCallback, myPictureCallback_RAW,
-                new PhotoHandler(getApplicationContext(), fileName, doCompare));
+                new PhotoHandler(getApplicationContext(), fileName, doCompare, codeCount));
     }
 
     public void photoLoop() {
