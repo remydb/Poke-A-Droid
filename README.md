@@ -5,16 +5,21 @@ It was inspired by [p2p-adb](https://github.com/kosborn/p2p-adb) by Kyle Osborn 
 
 ###Requirements
 USB On-The-Go cable/adapter
+
 Rooted phone
+
 Programmable USB-HID <-- Only for the bruteforcing of PIN codes
+
 
 ###Build notes
 To compile the source for this project, you must download the latest OpenCV for Android SDK and move the files to the *opencv* directory from this repository.
 
 ###Usage
 To use this application, you must have a USB On-The-Go adapter.
+
 Connect two phones to each-other, with the attacking phone attached to either the host end of a USB OTG cable or the USB OTG adapter.
 Download the Android gesture hash table from [here](http://www.android-forensics.com/tools/AndroidGestureSHA1.rar), extract and gzip it and move it to `<sdcard>/Android/data/com.os3.poke-a-droid/files/AndroidGestureSHA1.txt.gz`. (it's not included in the package as it's a bit big)
+
 You will now be able to start the application and use all of the functions, apart from the brute-forcing option.
 To use the brute-forcing option you must first configure a USB HID device to automatically enter 4 digit pin codes, example code for a Teensy 2 USB HID can be found [here](https://github.com/remydb/Poke-A-Droid/blob/master/teensy/usb_keyboard/example.c).
 The steps for bruteforcing:
