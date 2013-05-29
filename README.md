@@ -2,6 +2,10 @@
 Poke-A-Droid is an Android application created to easily test an Android phone's lock security.
 It was inspired by [p2p-adb](https://github.com/kosborn/p2p-adb) by Kyle Osborn and also uses some of his code and the AntiGuard APK.
 
+The application was made as a proof-of-concept all-in-one android hacking app, as such it may be unstable or perform unexpectedly.
+
+Demo can be viewed [here](http://youtu.be/kXjgEzYRjT8)
+
 
 ###Requirements
 USB On-The-Go cable/adapter
